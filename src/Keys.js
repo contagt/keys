@@ -26,7 +26,6 @@ export default class Keys {
       codes.forEach((code) => {
         success &= this.el[this.propertyname].isKeyPressed(code);
       });
-
       if (success) {
         callback(e);
       }
