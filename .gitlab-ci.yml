@@ -6,6 +6,7 @@ variables:
 stages:
   - build
   - lint
+  - test
   - release
   - deploy
 
@@ -32,11 +33,22 @@ lint:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "master"
 
+test:
+  stage: test
+  needs:
+    - build
+  script:
+    - npm run test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+
 release:
   stage: release
   image: docker.contagt.com/contagt-webservice-builder:latest
   needs:
     - lint
+    - test
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
   variables:
@@ -54,6 +66,7 @@ deploy:
   needs:
     - build
     - lint
+    - test
     - release
   stage: deploy
   rules:
