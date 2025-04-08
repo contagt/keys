@@ -5,7 +5,7 @@ export default class Keys {
     this.el = el;
 
     this.propertyname = "kys" + Math.random();
-    while (el[this.propertyname] !== null) {
+    while (el[this.propertyname] != null) {
       this.propertyname = "keys" + Math.random();
     }
 
