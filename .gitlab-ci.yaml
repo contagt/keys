@@ -1,0 +1,67 @@
+image: node:latest
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+  - build
+  - lint
+  - release
+  - deploy
+
+build:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+      - node_modules/
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+
+lint:
+  stage: lint
+  needs:
+    - build
+  script:
+    - npm run lint
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+
+release:
+  stage: release
+  image: docker.contagt.com/contagt-webservice-builder:latest
+  needs:
+    - lint
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  variables:
+    SECURE_FILES_DOWNLOAD_PATH: "./"
+  script:
+    - VERSION=$(grep -o "version\":.*\"" package.json | grep -oP "\d+.\d+.\d+")
+    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
+    - source .env.glab
+    - apt install -y glab
+    - glab auth login -h $CI_SERVER_HOST -t $GLAB_TOKEN
+    - glab auth status
+    - glab release create $VERSION -F CHANGELOG.md -n "Release $VERSION"
+
+deploy:
+  needs:
+    - build
+    - lint
+    - release
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  script:
+    - cp package.json dist/package.json
+    - cd dist/
+    - echo "@contagt:registry=https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/" > .npmrc
+    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - npm publish
+

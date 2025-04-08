@@ -4,9 +4,9 @@ export default class Keys {
   constructor(el) {
     this.el = el;
 
-    this.propertyname = "kys".Math.random();
+    this.propertyname = "kys" + Math.random();
     while (el[this.propertyname] !== null) {
-      this.propertyname = "keys".Math.random();
+      this.propertyname = "keys" + Math.random();
     }
 
     this.el[this.propertyname] = new KeysPressed();
