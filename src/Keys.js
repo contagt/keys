@@ -12,11 +12,11 @@ export default class Keys {
     this.el[this.propertyname] = new KeysPressed();
 
     this.el.addEventListener("keydown", (e) => {
-      this.el.keys.push(e.code);
+      this.el[this.propertyname].push(e.code);
     });
 
     this.el.addEventListener("keyup", (e) => {
-      this.el.keys.splice(e.code);
+      this.el[this.propertyname].splice(e.code);
     });
   }
 
