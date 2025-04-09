@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint ./src/**",
     "testfile": "vitest -t ",
-    "test": "vitest",
+    "test": "vitest run",
+    "test-and-watch": "vitest",
     "coverage": "vitest run --coverage"
   },
   "repository": {
