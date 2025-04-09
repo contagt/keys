@@ -1,24 +1,17 @@
 export default class KeysPressed {
   constructor() {
-    this._keyPresseds = [];
+    this._keyPresseds = new Set();
   }
 
   push(keyCode) {
-    if (this.isKeyPressed(keyCode) === false) {
-      return this._keyPresseds.push(keyCode);
-    }
+    return this._keyPresseds.add(keyCode);
   }
 
   splice(keyCode) {
-    if (this.isKeyPressed(keyCode) === true) {
-      const index = this._keyPresseds.indexOf(keyCode);
-      if (index !== -1) {
-        this._keyPresseds.splice(index, 1);
-      }
-    }
+    return this._keyPresseds.delete(keyCode)
   }
 
   isKeyPressed(keyCode) {
-    return this._keyPresseds.includes(keyCode);
+    return this._keyPresseds.has(keyCode);
   }
 }
