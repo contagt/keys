@@ -8,7 +8,7 @@ export default class KeysPressed {
   }
 
   splice(keyCode) {
-    return this._keyPresseds.delete(keyCode)
+    return this._keyPresseds.delete(keyCode);
   }
 
   isKeyPressed(keyCode) {
